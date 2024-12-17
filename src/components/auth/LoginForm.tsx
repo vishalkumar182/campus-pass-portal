@@ -14,7 +14,21 @@ export const LoginForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(email, password, role);
+      // Check for admin credentials
+      if (role === "admin") {
+        if (email === "vishal8049kumar@gmail.com" && password === "demo7017") {
+          await login(email, password, role);
+        } else {
+          toast({
+            title: "Invalid Admin Credentials",
+            description: "Please check your admin credentials and try again.",
+            variant: "destructive",
+          });
+          return;
+        }
+      } else {
+        await login(email, password, role);
+      }
     } catch (error) {
       console.error("Login error:", error);
       toast({
