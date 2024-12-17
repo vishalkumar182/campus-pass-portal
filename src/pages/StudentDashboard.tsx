@@ -1,89 +1,79 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/components/ui/use-toast";
+import StudentProfile from "@/components/student/StudentProfile";
+import OutpassForm from "@/components/student/OutpassForm";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const StudentDashboard = () => {
   const { user } = useAuth();
-  const { toast } = useToast();
-  const [formData, setFormData] = useState({
-    timeOut: "",
-    timeIn: "",
-    reason: "",
-  });
+  const [studentType, setStudentType] = useState<"hosteler" | "dayscholar" | null>(null);
+  const [showOutpassForm, setShowOutpassForm] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Submitting outpass request:", formData);
-    toast({
-      title: "Request Submitted",
-      description: "Your outpass request has been sent for approval.",
-    });
-    setFormData({ timeOut: "", timeIn: "", reason: "" });
+  const handleStudentTypeSelect = (value: "hosteler" | "dayscholar") => {
+    setStudentType(value);
+    setShowOutpassForm(true);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-          <h1 className="text-2xl font-bold text-primary mb-4">
-            Welcome, {user?.name}
-          </h1>
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-primary">Welcome, {user?.name}</h1>
           <p className="text-gray-600">Student Dashboard</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-semibold text-primary mb-6">
-            Request Outpass
-          </h2>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label htmlFor="timeOut">Time Out</Label>
-                <Input
-                  id="timeOut"
-                  type="datetime-local"
-                  value={formData.timeOut}
-                  onChange={(e) =>
-                    setFormData({ ...formData, timeOut: e.target.value })
+        <Tabs defaultValue="request" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="request">Request Outpass</TabsTrigger>
+            <TabsTrigger value="profile">My Profile</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="request" className="space-y-6">
+            {!showOutpassForm ? (
+              <div className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-xl font-semibold mb-4">Select Student Type</h2>
+                <RadioGroup
+                  onValueChange={(value: "hosteler" | "dayscholar") =>
+                    handleStudentTypeSelect(value)
                   }
-                  required
-                />
+                  className="space-y-4"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="hosteler" id="hosteler" />
+                    <Label htmlFor="hosteler">Hosteler</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="dayscholar" id="dayscholar" />
+                    <Label htmlFor="dayscholar">Day Scholar</Label>
+                  </div>
+                </RadioGroup>
               </div>
-              <div>
-                <Label htmlFor="timeIn">Expected Time In</Label>
-                <Input
-                  id="timeIn"
-                  type="datetime-local"
-                  value={formData.timeIn}
-                  onChange={(e) =>
-                    setFormData({ ...formData, timeIn: e.target.value })
-                  }
-                  required
-                />
+            ) : (
+              <div className="bg-white rounded-lg shadow p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-semibold">Outpass Request Form</h2>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowOutpassForm(false);
+                      setStudentType(null);
+                    }}
+                  >
+                    Change Student Type
+                  </Button>
+                </div>
+                {studentType && <OutpassForm studentType={studentType} />}
               </div>
-            </div>
-            <div>
-              <Label htmlFor="reason">Reason for Outpass</Label>
-              <Textarea
-                id="reason"
-                value={formData.reason}
-                onChange={(e) =>
-                  setFormData({ ...formData, reason: e.target.value })
-                }
-                required
-                className="min-h-[100px]"
-                placeholder="Please provide a detailed reason for your outpass request"
-              />
-            </div>
-            <Button type="submit" className="w-full md:w-auto">
-              Submit Request
-            </Button>
-          </form>
-        </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="profile">
+            <StudentProfile />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
