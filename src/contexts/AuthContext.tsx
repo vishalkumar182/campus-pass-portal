@@ -53,20 +53,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log("Logging in with:", { email, password, role });
       
-      // Simulate API call - In a real app, this would be an actual API call
-      const mockUser = {
-        id: "1",
-        name: role === "student" ? "John Doe" : "Admin User",
-        email,
-        role,
-      };
-      
-      setUser(mockUser);
-      localStorage.setItem("user", JSON.stringify(mockUser));
-      toast({
-        title: "Login successful",
-        description: `Welcome back, ${mockUser.name}!`,
-      });
+      // For admin login, use fixed name
+      if (role === "admin") {
+        const mockUser = {
+          id: "1",
+          name: "Admin User",
+          email,
+          role,
+        };
+        setUser(mockUser);
+        localStorage.setItem("user", JSON.stringify(mockUser));
+        toast({
+          title: "Login successful",
+          description: `Welcome back, ${mockUser.name}!`,
+        });
+      } else {
+        // For student login, get the stored user data from localStorage
+        const storedUsers = JSON.parse(localStorage.getItem("users") || "[]");
+        const foundUser = storedUsers.find((u: SignupData) => u.email === email);
+        
+        if (foundUser) {
+          const mockUser = {
+            id: "1",
+            name: foundUser.name,
+            email,
+            role,
+            registrationNumber: foundUser.registrationNumber,
+            department: foundUser.department,
+            year: foundUser.year,
+            roomNumber: foundUser.roomNumber,
+            phoneNumber: foundUser.phoneNumber,
+          };
+          setUser(mockUser);
+          localStorage.setItem("user", JSON.stringify(mockUser));
+          toast({
+            title: "Login successful",
+            description: `Welcome back, ${mockUser.name}!`,
+          });
+        } else {
+          throw new Error("User not found");
+        }
+      }
     } catch (error) {
       console.error("Login error:", error);
       toast({
@@ -82,17 +109,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log("Signing up with:", userData);
       
-      // Simulate API call - In a real app, this would be an actual API call
-      const mockUser = {
-        id: Math.random().toString(36).substr(2, 9),
-        ...userData,
-      };
+      // Store the user data in localStorage
+      const storedUsers = JSON.parse(localStorage.getItem("users") || "[]");
+      storedUsers.push(userData);
+      localStorage.setItem("users", JSON.stringify(storedUsers));
       
-      setUser(mockUser);
-      localStorage.setItem("user", JSON.stringify(mockUser));
       toast({
         title: "Signup successful",
-        description: `Welcome, ${mockUser.name}!`,
+        description: `Welcome, ${userData.name}!`,
       });
     } catch (error) {
       console.error("Signup error:", error);
