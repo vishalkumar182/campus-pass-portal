@@ -4,9 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
+import { Eye, EyeOff } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const SignupForm = () => {
   const { signup } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -39,6 +43,15 @@ export const SignupForm = () => {
     try {
       const { confirmPassword, ...signupData } = formData;
       await signup(signupData);
+      // After successful signup, switch to login tab
+      const loginTab = document.querySelector('[data-tab="login"]') as HTMLElement;
+      if (loginTab) {
+        loginTab.click();
+      }
+      toast({
+        title: "Account created successfully",
+        description: "Please login with your credentials.",
+      });
     } catch (error) {
       console.error("Signup error:", error);
       toast({
@@ -74,25 +87,51 @@ export const SignupForm = () => {
       </div>
       <div className="space-y-2">
         <Label htmlFor="signup-password">Password</Label>
-        <Input
-          id="signup-password"
-          type="password"
-          value={formData.password}
-          onChange={(e) => updateFormData("password", e.target.value)}
-          required
-          placeholder="Create a password"
-        />
+        <div className="relative">
+          <Input
+            id="signup-password"
+            type={showPassword ? "text" : "password"}
+            value={formData.password}
+            onChange={(e) => updateFormData("password", e.target.value)}
+            required
+            placeholder="Create a password"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-2 top-1/2 -translate-y-1/2"
+          >
+            {showPassword ? (
+              <EyeOff className="h-4 w-4 text-gray-500" />
+            ) : (
+              <Eye className="h-4 w-4 text-gray-500" />
+            )}
+          </button>
+        </div>
       </div>
       <div className="space-y-2">
         <Label htmlFor="confirm-password">Confirm Password</Label>
-        <Input
-          id="confirm-password"
-          type="password"
-          value={formData.confirmPassword}
-          onChange={(e) => updateFormData("confirmPassword", e.target.value)}
-          required
-          placeholder="Confirm your password"
-        />
+        <div className="relative">
+          <Input
+            id="confirm-password"
+            type={showConfirmPassword ? "text" : "password"}
+            value={formData.confirmPassword}
+            onChange={(e) => updateFormData("confirmPassword", e.target.value)}
+            required
+            placeholder="Confirm your password"
+          />
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            className="absolute right-2 top-1/2 -translate-y-1/2"
+          >
+            {showConfirmPassword ? (
+              <EyeOff className="h-4 w-4 text-gray-500" />
+            ) : (
+              <Eye className="h-4 w-4 text-gray-500" />
+            )}
+          </button>
+        </div>
       </div>
       <div className="space-y-2">
         <Label htmlFor="registration-number">Registration Number</Label>
