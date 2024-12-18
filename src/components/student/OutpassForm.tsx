@@ -16,7 +16,30 @@ const OutpassForm = ({ studentType }: { studentType: "hosteler" | "dayscholar" }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submitting outpass request:", { ...formData, studentType });
+    
+    // Save the outpass request to localStorage
+    const outpassRequests = JSON.parse(localStorage.getItem("outpassRequests") || "[]");
+    const newRequest = {
+      id: Date.now(),
+      studentType,
+      studentDetails: {
+        name: user?.name,
+        email: user?.email,
+        registrationNumber: user?.registrationNumber,
+        department: user?.department,
+        year: user?.year,
+        phoneNumber: user?.phoneNumber,
+        roomNumber: studentType === "hosteler" ? user?.roomNumber : null,
+      },
+      ...formData,
+      status: "pending",
+      submittedAt: new Date().toISOString(),
+    };
+    
+    outpassRequests.push(newRequest);
+    localStorage.setItem("outpassRequests", JSON.stringify(outpassRequests));
+    
+    console.log("Submitting outpass request:", newRequest);
     toast({
       title: "Outpass Request Submitted",
       description: "Your request has been sent for approval.",

@@ -4,20 +4,27 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export const LoginForm = () => {
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"student" | "admin">("student");
+  const [adminCode, setAdminCode] = useState("");
+  const [showAdminFields, setShowAdminFields] = useState(false);
+  const [adminType, setAdminType] = useState<"RT" | "principal">("RT");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       // Check for admin credentials
-      if (role === "admin") {
-        if (email === "vishal8049kumar@gmail.com" && password === "demo7017") {
-          await login(email, password, role);
+      if (showAdminFields) {
+        if (
+          email === "vishal8049kumar@gmail.com" &&
+          password === "1234567890" &&
+          adminCode === "grace"
+        ) {
+          await login(email, password, "admin");
         } else {
           toast({
             title: "Invalid Admin Credentials",
@@ -27,7 +34,7 @@ export const LoginForm = () => {
           return;
         }
       } else {
-        await login(email, password, role);
+        await login(email, password, "student");
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -63,27 +70,53 @@ export const LoginForm = () => {
           placeholder="Enter your password"
         />
       </div>
-      <div className="flex gap-4">
-        <Button
-          type="button"
-          variant={role === "student" ? "default" : "outline"}
-          className="flex-1"
-          onClick={() => setRole("student")}
-        >
-          Student
+
+      {showAdminFields && (
+        <>
+          <div className="space-y-2">
+            <Label htmlFor="admin-code">Admin Code</Label>
+            <Input
+              id="admin-code"
+              type="password"
+              value={adminCode}
+              onChange={(e) => setAdminCode(e.target.value)}
+              required
+              placeholder="Enter admin code"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Admin Type</Label>
+            <RadioGroup
+              value={adminType}
+              onValueChange={(value) => setAdminType(value as "RT" | "principal")}
+              className="flex space-x-4"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="RT" id="rt" />
+                <Label htmlFor="rt">RT</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="principal" id="principal" />
+                <Label htmlFor="principal">Principal</Label>
+              </div>
+            </RadioGroup>
+          </div>
+        </>
+      )}
+
+      <div className="space-y-4">
+        <Button type="submit" className="w-full">
+          {showAdminFields ? "Admin Login" : "Student Login"}
         </Button>
         <Button
           type="button"
-          variant={role === "admin" ? "default" : "outline"}
-          className="flex-1"
-          onClick={() => setRole("admin")}
+          variant="outline"
+          className="w-full"
+          onClick={() => setShowAdminFields(!showAdminFields)}
         >
-          Admin
+          {showAdminFields ? "Switch to Student Login" : "Admin Login"}
         </Button>
       </div>
-      <Button type="submit" className="w-full">
-        Login
-      </Button>
     </form>
   );
 };
