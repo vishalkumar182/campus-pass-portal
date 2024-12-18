@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Eye, EyeOff } from "lucide-react";
+import { PasswordInput } from "./PasswordInput";
+import { AdminLoginFields } from "./AdminLoginFields";
 
 export const LoginForm = () => {
   const { login } = useAuth();
@@ -14,12 +14,10 @@ export const LoginForm = () => {
   const [adminCode, setAdminCode] = useState("");
   const [showAdminFields, setShowAdminFields] = useState(false);
   const [adminType, setAdminType] = useState<"RT" | "principal">("RT");
-  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Check for admin credentials
       if (showAdminFields) {
         if (
           email === "vishal8049kumar@gmail.com" &&
@@ -63,60 +61,20 @@ export const LoginForm = () => {
       </div>
       <div className="space-y-2">
         <Label htmlFor="login-password">Password</Label>
-        <div className="relative">
-          <Input
-            id="login-password"
-            type={showPassword ? "text" : "password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            placeholder="Enter your password"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-2 top-1/2 -translate-y-1/2"
-          >
-            {showPassword ? (
-              <EyeOff className="h-4 w-4 text-gray-500" />
-            ) : (
-              <Eye className="h-4 w-4 text-gray-500" />
-            )}
-          </button>
-        </div>
+        <PasswordInput
+          id="login-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
       </div>
 
       {showAdminFields && (
-        <>
-          <div className="space-y-2">
-            <Label htmlFor="admin-code">Admin Code</Label>
-            <Input
-              id="admin-code"
-              type="password"
-              value={adminCode}
-              onChange={(e) => setAdminCode(e.target.value)}
-              required
-              placeholder="Enter admin code"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Admin Type</Label>
-            <RadioGroup
-              value={adminType}
-              onValueChange={(value) => setAdminType(value as "RT" | "principal")}
-              className="flex space-x-4"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="RT" id="rt" />
-                <Label htmlFor="rt">RT</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="principal" id="principal" />
-                <Label htmlFor="principal">Principal</Label>
-              </div>
-            </RadioGroup>
-          </div>
-        </>
+        <AdminLoginFields
+          adminCode={adminCode}
+          setAdminCode={setAdminCode}
+          adminType={adminType}
+          setAdminType={setAdminType}
+        />
       )}
 
       <div className="space-y-4">

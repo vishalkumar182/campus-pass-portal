@@ -4,13 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
-import { Eye, EyeOff } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PasswordInput } from "./PasswordInput";
+import { StudentSignupFields } from "./StudentSignupFields";
 
 export const SignupForm = () => {
   const { signup } = useAuth();
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -87,105 +85,25 @@ export const SignupForm = () => {
       </div>
       <div className="space-y-2">
         <Label htmlFor="signup-password">Password</Label>
-        <div className="relative">
-          <Input
-            id="signup-password"
-            type={showPassword ? "text" : "password"}
-            value={formData.password}
-            onChange={(e) => updateFormData("password", e.target.value)}
-            required
-            placeholder="Create a password"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-2 top-1/2 -translate-y-1/2"
-          >
-            {showPassword ? (
-              <EyeOff className="h-4 w-4 text-gray-500" />
-            ) : (
-              <Eye className="h-4 w-4 text-gray-500" />
-            )}
-          </button>
-        </div>
+        <PasswordInput
+          id="signup-password"
+          value={formData.password}
+          onChange={(e) => updateFormData("password", e.target.value)}
+          placeholder="Create a password"
+        />
       </div>
       <div className="space-y-2">
         <Label htmlFor="confirm-password">Confirm Password</Label>
-        <div className="relative">
-          <Input
-            id="confirm-password"
-            type={showConfirmPassword ? "text" : "password"}
-            value={formData.confirmPassword}
-            onChange={(e) => updateFormData("confirmPassword", e.target.value)}
-            required
-            placeholder="Confirm your password"
-          />
-          <button
-            type="button"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-2 top-1/2 -translate-y-1/2"
-          >
-            {showConfirmPassword ? (
-              <EyeOff className="h-4 w-4 text-gray-500" />
-            ) : (
-              <Eye className="h-4 w-4 text-gray-500" />
-            )}
-          </button>
-        </div>
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="registration-number">Registration Number</Label>
-        <Input
-          id="registration-number"
-          value={formData.registrationNumber}
-          onChange={(e) => updateFormData("registrationNumber", e.target.value)}
-          required
-          placeholder="Enter registration number"
+        <PasswordInput
+          id="confirm-password"
+          value={formData.confirmPassword}
+          onChange={(e) => updateFormData("confirmPassword", e.target.value)}
+          placeholder="Confirm your password"
         />
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="department">Department</Label>
-          <Input
-            id="department"
-            value={formData.department}
-            onChange={(e) => updateFormData("department", e.target.value)}
-            required
-            placeholder="Enter department"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="year">Year</Label>
-          <Input
-            id="year"
-            value={formData.year}
-            onChange={(e) => updateFormData("year", e.target.value)}
-            required
-            placeholder="Enter year"
-          />
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="room-number">Room Number (Optional)</Label>
-          <Input
-            id="room-number"
-            value={formData.roomNumber}
-            onChange={(e) => updateFormData("roomNumber", e.target.value)}
-            placeholder="Enter room number"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="phone-number">Phone Number</Label>
-          <Input
-            id="phone-number"
-            value={formData.phoneNumber}
-            onChange={(e) => updateFormData("phoneNumber", e.target.value)}
-            required
-            placeholder="Enter phone number"
-          />
-        </div>
-      </div>
+
+      <StudentSignupFields formData={formData} updateFormData={updateFormData} />
+
       <Button type="submit" className="w-full">
         Create Account
       </Button>
