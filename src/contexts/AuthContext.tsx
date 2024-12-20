@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 type UserRole = "student" | "admin" | null;
 
@@ -40,6 +41,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -67,6 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           title: "Login successful",
           description: `Welcome back, ${mockUser.name}!`,
         });
+        navigate("/admin-dashboard");
       } else {
         // For student login, get the stored user data from localStorage
         const storedUsers = JSON.parse(localStorage.getItem("users") || "[]");
@@ -90,6 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             title: "Login successful",
             description: `Welcome back, ${mockUser.name}!`,
           });
+          navigate("/student-dashboard");
         } else {
           throw new Error("User not found");
         }
@@ -136,6 +140,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       title: "Logged out",
       description: "You have been successfully logged out.",
     });
+    navigate("/login");
   };
 
   return (
