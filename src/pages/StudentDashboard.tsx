@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import StudentProfile from "@/components/student/StudentProfile";
 import OutpassForm from "@/components/student/OutpassForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import DashboardHeader from "@/components/shared/DashboardHeader";
 
 const StudentDashboard = () => {
   const { user } = useAuth();
@@ -18,14 +19,15 @@ const StudentDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-primary">Welcome, {user?.name}</h1>
-          <p className="text-gray-600">Student Dashboard</p>
-        </div>
+    <div className="min-h-screen bg-gray-50">
+      <DashboardHeader />
+      <div className="p-4 md:p-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-primary">Student Dashboard</h2>
+          </div>
 
-        <Tabs defaultValue="request" className="space-y-6">
+          <Tabs defaultValue="request" className="space-y-6">
           <TabsList>
             <TabsTrigger value="request">Request Outpass</TabsTrigger>
             <TabsTrigger value="profile">My Profile</TabsTrigger>
@@ -73,7 +75,8 @@ const StudentDashboard = () => {
           <TabsContent value="profile">
             <StudentProfile />
           </TabsContent>
-        </Tabs>
+          </Tabs>
+        </div>
       </div>
     </div>
   );
