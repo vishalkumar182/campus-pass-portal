@@ -13,13 +13,25 @@ export const LoginForm = () => {
   const [password, setPassword] = useState("");
   const [adminCode, setAdminCode] = useState("");
   const [showAdminFields, setShowAdminFields] = useState(false);
-  const [adminType, setAdminType] = useState<"RT" | "principal">("RT");
+  const [adminType, setAdminType] = useState<"RT" | "principal" | "advisor">("RT");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       if (showAdminFields) {
-        if (
+        if (adminType === "advisor") {
+          // For advisor login, we'll use a different validation logic
+          if (adminCode === "advisor123") { // This is just an example code
+            await login(email, password, "advisor");
+          } else {
+            toast({
+              title: "Invalid Advisor Code",
+              description: "Please check your advisor credentials and try again.",
+              variant: "destructive",
+            });
+            return;
+          }
+        } else if (
           email === "vishal8049kumar@gmail.com" &&
           password === "1234567890" &&
           adminCode === "grace"
