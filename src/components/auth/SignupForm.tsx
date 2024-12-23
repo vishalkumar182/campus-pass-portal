@@ -9,6 +9,7 @@ import { StudentSignupFields } from "./StudentSignupFields";
 
 export const SignupForm = () => {
   const { signup } = useAuth();
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -26,9 +27,16 @@ export const SignupForm = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const handleNext = () => {
+    if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required personal information fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       toast({
         title: "Password Mismatch",
@@ -38,10 +46,24 @@ export const SignupForm = () => {
       return;
     }
 
+    setStep(2);
+  };
+
+  const handleBack = () => {
+    setStep(1);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (step === 1) {
+      handleNext();
+      return;
+    }
+
     try {
       const { confirmPassword, ...signupData } = formData;
       await signup(signupData);
-      // After successful signup, switch to login tab
       const loginTab = document.querySelector('[data-tab="login"]') as HTMLElement;
       if (loginTab) {
         loginTab.click();
@@ -62,51 +84,75 @@ export const SignupForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="signup-name">Full Name</Label>
-        <Input
-          id="signup-name"
-          value={formData.name}
-          onChange={(e) => updateFormData("name", e.target.value)}
-          required
-          placeholder="Enter your full name"
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="signup-email">Email</Label>
-        <Input
-          id="signup-email"
-          type="email"
-          value={formData.email}
-          onChange={(e) => updateFormData("email", e.target.value)}
-          required
-          placeholder="Enter your email"
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="signup-password">Password</Label>
-        <PasswordInput
-          id="signup-password"
-          value={formData.password}
-          onChange={(e) => updateFormData("password", e.target.value)}
-          placeholder="Create a password"
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="confirm-password">Confirm Password</Label>
-        <PasswordInput
-          id="confirm-password"
-          value={formData.confirmPassword}
-          onChange={(e) => updateFormData("confirmPassword", e.target.value)}
-          placeholder="Confirm your password"
-        />
-      </div>
-
-      <StudentSignupFields formData={formData} updateFormData={updateFormData} />
-
-      <Button type="submit" className="w-full">
-        Create Account
-      </Button>
+      {step === 1 ? (
+        <>
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Personal Information</h3>
+            <div className="space-y-2">
+              <Label htmlFor="signup-name">Full Name</Label>
+              <Input
+                id="signup-name"
+                value={formData.name}
+                onChange={(e) => updateFormData("name", e.target.value)}
+                required
+                placeholder="Enter your full name"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="signup-email">Email</Label>
+              <Input
+                id="signup-email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => updateFormData("email", e.target.value)}
+                required
+                placeholder="Enter your email"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="signup-password">Password</Label>
+              <PasswordInput
+                id="signup-password"
+                value={formData.password}
+                onChange={(e) => updateFormData("password", e.target.value)}
+                placeholder="Create a password"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirm-password">Confirm Password</Label>
+              <PasswordInput
+                id="confirm-password"
+                value={formData.confirmPassword}
+                onChange={(e) => updateFormData("confirmPassword", e.target.value)}
+                placeholder="Confirm your password"
+              />
+            </div>
+          </div>
+          <Button type="submit" className="w-full">
+            Next
+          </Button>
+        </>
+      ) : (
+        <>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Academic Information</h3>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleBack}
+                className="text-sm"
+              >
+                Back
+              </Button>
+            </div>
+            <StudentSignupFields formData={formData} updateFormData={updateFormData} />
+          </div>
+          <Button type="submit" className="w-full">
+            Create Account
+          </Button>
+        </>
+      )}
     </form>
   );
 };
