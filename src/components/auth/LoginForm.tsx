@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,13 +15,19 @@ export const LoginForm = () => {
   const [showAdminFields, setShowAdminFields] = useState(false);
   const [adminType, setAdminType] = useState<"RT" | "principal" | "advisor">("RT");
 
+  // Reset form fields when switching between admin and student login
+  useEffect(() => {
+    setEmail("");
+    setPassword("");
+    setAdminCode("");
+  }, [showAdminFields, adminType]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       if (showAdminFields) {
         if (adminType === "advisor") {
-          // For advisor login, we'll use a different validation logic
-          if (adminCode === "advisor123") { // This is just an example code
+          if (adminCode === "advisor123") {
             await login(email, password, "advisor");
           } else {
             toast({
