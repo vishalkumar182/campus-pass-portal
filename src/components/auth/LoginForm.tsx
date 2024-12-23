@@ -66,6 +66,15 @@ export const LoginForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {showAdminFields && (
+        <AdminLoginFields
+          adminCode={adminCode}
+          setAdminCode={setAdminCode}
+          adminType={adminType}
+          setAdminType={setAdminType}
+        />
+      )}
+
       <div className="space-y-2">
         <Label htmlFor="login-email">Email</Label>
         <Input
@@ -85,15 +94,6 @@ export const LoginForm = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-
-      {showAdminFields && (
-        <AdminLoginFields
-          adminCode={adminCode}
-          setAdminCode={setAdminCode}
-          adminType={adminType}
-          setAdminType={setAdminType}
-        />
-      )}
 
       <div className="space-y-4">
         <Button type="submit" className="w-full">
