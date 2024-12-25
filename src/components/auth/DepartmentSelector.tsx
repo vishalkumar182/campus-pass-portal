@@ -19,17 +19,20 @@ export const DepartmentSelector = ({
   ];
 
   return (
-    <div className="space-y-2">
-      <Label>Select Department</Label>
+    <div className="space-y-3">
+      <Label className="font-medium">Select Department</Label>
       <RadioGroup
         value={selectedDepartment}
         onValueChange={setSelectedDepartment}
         className="grid grid-cols-1 gap-2"
       >
         {departments.map((dept) => (
-          <div key={dept.id} className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
+          <div 
+            key={dept.id} 
+            className="flex items-center space-x-2 p-3 rounded-lg hover:bg-primary/5 transition-colors border border-primary/10"
+          >
             <RadioGroupItem value={dept.id} id={dept.id} />
-            <Label htmlFor={dept.id} className="flex-grow cursor-pointer">
+            <Label htmlFor={dept.id} className="flex-grow cursor-pointer font-medium">
               {dept.name}
             </Label>
           </div>

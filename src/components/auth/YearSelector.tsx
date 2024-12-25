@@ -18,17 +18,20 @@ export const YearSelector = ({
   ];
 
   return (
-    <div className="space-y-2">
-      <Label>Select Year</Label>
+    <div className="space-y-3">
+      <Label className="font-medium">Select Year</Label>
       <RadioGroup
         value={selectedYear}
         onValueChange={setSelectedYear}
         className="grid grid-cols-2 gap-2"
       >
         {years.map((year) => (
-          <div key={year.id} className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
+          <div 
+            key={year.id} 
+            className="flex items-center space-x-2 p-3 rounded-lg hover:bg-primary/5 transition-colors border border-primary/10"
+          >
             <RadioGroupItem value={year.id} id={`year-${year.id}`} />
-            <Label htmlFor={`year-${year.id}`} className="cursor-pointer">
+            <Label htmlFor={`year-${year.id}`} className="cursor-pointer font-medium">
               {year.name}
             </Label>
           </div>
