@@ -5,11 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
-import { useNavigate } from "react-router-dom";
 
-const OutpassForm = ({ studentType }: { studentType: "hosteler" | "dayscholar" }) => {
+interface OutpassFormProps {
+  studentType: "hosteler" | "dayscholar";
+  onSubmitSuccess: () => void;
+}
+
+const OutpassForm = ({ studentType, onSubmitSuccess }: OutpassFormProps) => {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     timeOut: "",
     timeIn: "",
@@ -69,8 +72,8 @@ const OutpassForm = ({ studentType }: { studentType: "hosteler" | "dayscholar" }
     });
     setFormData({ timeOut: "", timeIn: "", reason: "" });
     
-    // Navigate to dashboard after submission
-    navigate("/student-dashboard");
+    // Call the success callback
+    onSubmitSuccess();
   };
 
   return (
@@ -148,7 +151,7 @@ const OutpassForm = ({ studentType }: { studentType: "hosteler" | "dayscholar" }
         <Button 
           type="button" 
           variant="outline"
-          onClick={() => navigate("/student-dashboard")}
+          onClick={onSubmitSuccess}
           className="flex-1"
         >
           Cancel
