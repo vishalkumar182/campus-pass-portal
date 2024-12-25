@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
-import { PasswordInput } from "./PasswordInput";
+import { PersonalInfoFields } from "./PersonalInfoFields";
 import { StudentSignupFields } from "./StudentSignupFields";
 
 export const SignupForm = () => {
@@ -27,14 +25,14 @@ export const SignupForm = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleNext = () => {
+  const validatePersonalInfo = () => {
     if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required personal information fields.",
         variant: "destructive",
       });
-      return;
+      return false;
     }
 
     if (formData.password !== formData.confirmPassword) {
@@ -43,10 +41,27 @@ export const SignupForm = () => {
         description: "Password and confirmation password do not match.",
         variant: "destructive",
       });
-      return;
+      return false;
     }
+    return true;
+  };
 
-    setStep(2);
+  const validateAcademicInfo = () => {
+    if (!formData.registrationNumber || !formData.department || !formData.year || !formData.phoneNumber) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required academic information fields.",
+        variant: "destructive",
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const handleNext = () => {
+    if (validatePersonalInfo()) {
+      setStep(2);
+    }
   };
 
   const handleBack = () => {
@@ -61,13 +76,7 @@ export const SignupForm = () => {
       return;
     }
 
-    // Validate step 2 fields
-    if (!formData.registrationNumber || !formData.department || !formData.year || !formData.phoneNumber) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all required academic information fields.",
-        variant: "destructive",
-      });
+    if (!validateAcademicInfo()) {
       return;
     }
 
@@ -81,7 +90,6 @@ export const SignupForm = () => {
         description: "Please login with your credentials.",
       });
       
-      // Find and click the login tab
       const loginTab = document.querySelector('[data-tab="login"]') as HTMLElement;
       if (loginTab) {
         loginTab.click();
@@ -100,48 +108,7 @@ export const SignupForm = () => {
     <form onSubmit={handleSubmit} className="space-y-4">
       {step === 1 ? (
         <>
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Personal Information</h3>
-            <div className="space-y-2">
-              <Label htmlFor="signup-name">Full Name</Label>
-              <Input
-                id="signup-name"
-                value={formData.name}
-                onChange={(e) => updateFormData("name", e.target.value)}
-                required
-                placeholder="Enter your full name"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="signup-email">Email</Label>
-              <Input
-                id="signup-email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => updateFormData("email", e.target.value)}
-                required
-                placeholder="Enter your email"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="signup-password">Password</Label>
-              <PasswordInput
-                id="signup-password"
-                value={formData.password}
-                onChange={(e) => updateFormData("password", e.target.value)}
-                placeholder="Create a password"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirm-password">Confirm Password</Label>
-              <PasswordInput
-                id="confirm-password"
-                value={formData.confirmPassword}
-                onChange={(e) => updateFormData("confirmPassword", e.target.value)}
-                placeholder="Confirm your password"
-              />
-            </div>
-          </div>
+          <PersonalInfoFields formData={formData} updateFormData={updateFormData} />
           <Button type="submit" className="w-full">
             Next
           </Button>
