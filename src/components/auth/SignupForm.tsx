@@ -61,17 +61,31 @@ export const SignupForm = () => {
       return;
     }
 
+    // Validate step 2 fields
+    if (!formData.registrationNumber || !formData.department || !formData.year || !formData.phoneNumber) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required academic information fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
+      console.log("Attempting to signup with data:", formData);
       const { confirmPassword, ...signupData } = formData;
       await signup(signupData);
-      const loginTab = document.querySelector('[data-tab="login"]') as HTMLElement;
-      if (loginTab) {
-        loginTab.click();
-      }
+      
       toast({
         title: "Account created successfully",
         description: "Please login with your credentials.",
       });
+      
+      // Find and click the login tab
+      const loginTab = document.querySelector('[data-tab="login"]') as HTMLElement;
+      if (loginTab) {
+        loginTab.click();
+      }
     } catch (error) {
       console.error("Signup error:", error);
       toast({
