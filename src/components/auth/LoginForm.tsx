@@ -7,7 +7,11 @@ import { toast } from "@/components/ui/use-toast";
 import { PasswordInput } from "./PasswordInput";
 import { AdminLoginFields } from "./AdminLoginFields";
 
-export const LoginForm = () => {
+interface LoginFormProps {
+  onLoginTypeChange: (isAdmin: boolean) => void;
+}
+
+export const LoginForm = ({ onLoginTypeChange }: LoginFormProps) => {
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,12 +19,16 @@ export const LoginForm = () => {
   const [showAdminFields, setShowAdminFields] = useState(false);
   const [adminType, setAdminType] = useState<"RT" | "principal" | "advisor">("RT");
 
-  // Reset form fields when switching between admin and student login
   useEffect(() => {
     setEmail("");
     setPassword("");
     setAdminCode("");
   }, [showAdminFields, adminType]);
+
+  // Notify parent component when admin/student login is switched
+  useEffect(() => {
+    onLoginTypeChange(showAdminFields);
+  }, [showAdminFields, onLoginTypeChange]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
