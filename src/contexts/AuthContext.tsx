@@ -14,6 +14,7 @@ interface User {
   year?: string;
   roomNumber?: string;
   phoneNumber?: string;
+  photoUrl?: string;
 }
 
 interface AuthContextType {
@@ -22,6 +23,7 @@ interface AuthContextType {
   signup: (userData: SignupData) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
+  updateUser: (userData: User) => void;
 }
 
 interface SignupData {
@@ -34,9 +36,15 @@ interface SignupData {
   year?: string;
   roomNumber?: string;
   phoneNumber?: string;
+  photoUrl?: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -51,11 +59,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false);
   }, []);
 
+  const updateUser = (userData: User) => {
+    setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData));
+  };
+
   const login = async (email: string, password: string, role: UserRole) => {
     try {
       console.log("Logging in with:", { email, password, role });
       
-      // For admin login, use fixed name
+      if (!validateEmail(email)) {
+        throw new Error("Invalid email format");
+      }
+
       if (role === "admin") {
         const mockUser = {
           id: "1",
@@ -71,21 +87,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
         navigate("/admin-dashboard");
       } else {
-        // For student login, get the stored user data from localStorage
         const storedUsers = JSON.parse(localStorage.getItem("users") || "[]");
         const foundUser = storedUsers.find((u: SignupData) => u.email === email);
         
         if (foundUser) {
           const mockUser = {
             id: "1",
-            name: foundUser.name,
-            email,
+            ...foundUser,
             role,
-            registrationNumber: foundUser.registrationNumber,
-            department: foundUser.department,
-            year: foundUser.year,
-            roomNumber: foundUser.roomNumber,
-            phoneNumber: foundUser.phoneNumber,
           };
           setUser(mockUser);
           localStorage.setItem("user", JSON.stringify(mockUser));
@@ -102,7 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error("Login error:", error);
       toast({
         title: "Login failed",
-        description: "Invalid credentials. Please try again.",
+        description: error instanceof Error ? error.message : "Invalid credentials. Please try again.",
         variant: "destructive",
       });
       throw error;
@@ -113,8 +122,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log("Signing up with:", userData);
       
-      // Store the user data in localStorage
+      if (!validateEmail(userData.email)) {
+        throw new Error("Please enter a valid email address");
+      }
+
+      // Check if email already exists
       const storedUsers = JSON.parse(localStorage.getItem("users") || "[]");
+      if (storedUsers.some((u: SignupData) => u.email === userData.email)) {
+        throw new Error("Email already registered");
+      }
+      
       storedUsers.push(userData);
       localStorage.setItem("users", JSON.stringify(storedUsers));
       
@@ -126,7 +143,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error("Signup error:", error);
       toast({
         title: "Signup failed",
-        description: "Unable to create account. Please try again.",
+        description: error instanceof Error ? error.message : "Unable to create account. Please try again.",
         variant: "destructive",
       });
       throw error;
@@ -144,7 +161,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, isLoading, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
