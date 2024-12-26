@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
 import { PasswordInput } from "./PasswordInput";
 import { AdminLoginFields } from "./AdminLoginFields";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ForgotPasswordForm } from "./ForgotPasswordForm";
 
 interface LoginFormProps {
   onLoginTypeChange: (isAdmin: boolean) => void;
@@ -25,7 +27,6 @@ export const LoginForm = ({ onLoginTypeChange }: LoginFormProps) => {
     setAdminCode("");
   }, [showAdminFields, adminType]);
 
-  // Notify parent component when admin/student login is switched
   useEffect(() => {
     onLoginTypeChange(showAdminFields);
   }, [showAdminFields, onLoginTypeChange]);
@@ -101,6 +102,24 @@ export const LoginForm = ({ onLoginTypeChange }: LoginFormProps) => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        {!showAdminFields && (
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                variant="link"
+                className="px-0 font-normal text-sm text-primary hover:text-primary/90"
+              >
+                Forgot password?
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Reset Password</DialogTitle>
+              </DialogHeader>
+              <ForgotPasswordForm />
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
 
       <div className="space-y-4">
