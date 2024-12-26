@@ -45,15 +45,7 @@ const OutpassForm = ({ studentType, onSubmitSuccess }: OutpassFormProps) => {
     const newRequest = {
       id: Date.now(),
       studentType,
-      studentDetails: {
-        name: user?.name,
-        email: user?.email,
-        registrationNumber: user?.registrationNumber,
-        department: user?.department,
-        year: user?.year,
-        phoneNumber: user?.phoneNumber,
-        roomNumber: studentType === "hosteler" ? user?.roomNumber : null,
-      },
+      email: user?.email,
       ...formData,
       status: "pending",
       submittedAt: new Date().toISOString(),
