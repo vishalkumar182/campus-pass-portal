@@ -35,27 +35,28 @@ export const LoginForm = ({ onLoginTypeChange }: LoginFormProps) => {
     e.preventDefault();
     try {
       if (showAdminFields) {
+        // Simplified admin credentials for testing
         if (adminType === "advisor") {
-          if (adminCode === "advisor123") {
+          if (adminCode === "123") {
             await login(email, password, "advisor");
           } else {
             toast({
               title: "Invalid Advisor Code",
-              description: "Please check your advisor credentials and try again.",
+              description: "Use code: 123",
               variant: "destructive",
             });
             return;
           }
         } else if (
-          email === "vishal8049kumar@gmail.com" &&
-          password === "1234567890" &&
-          adminCode === "grace"
+          email === "admin@test.com" &&
+          password === "123456" &&
+          adminCode === "123"
         ) {
           await login(email, password, "admin");
         } else {
           toast({
             title: "Invalid Admin Credentials",
-            description: "Please check your admin credentials and try again.",
+            description: "Use: admin@test.com / 123456 / code: 123",
             variant: "destructive",
           });
           return;
