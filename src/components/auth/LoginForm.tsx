@@ -34,7 +34,7 @@ export const LoginForm = ({ onLoginTypeChange }: LoginFormProps) => {
     e.preventDefault();
     try {
       if (showAdminFields) {
-        // Simplified admin credentials for testing
+        // Using same credentials for all admin roles
         const validCredentials = 
           email === "admin@test.com" &&
           password === "123456" &&
@@ -43,7 +43,7 @@ export const LoginForm = ({ onLoginTypeChange }: LoginFormProps) => {
         if (!validCredentials) {
           toast({
             title: "Invalid Admin Credentials",
-            description: "Use: admin@test.com / 123456 / code: 123",
+            description: `Use: admin@test.com / 123456 / code: 123`,
             variant: "destructive",
           });
           return;
