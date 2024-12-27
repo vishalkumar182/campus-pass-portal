@@ -36,6 +36,11 @@ export const LoginForm = ({ onLoginTypeChange }: LoginFormProps) => {
     try {
       if (showAdminFields) {
         // Simplified admin credentials for testing
+        const validCredentials = 
+          email === "admin@test.com" &&
+          password === "123456" &&
+          adminCode === "123";
+
         if (adminType === "advisor") {
           if (adminCode === "123") {
             await login(email, password, "advisor");
@@ -47,11 +52,8 @@ export const LoginForm = ({ onLoginTypeChange }: LoginFormProps) => {
             });
             return;
           }
-        } else if (
-          email === "admin@test.com" &&
-          password === "123456" &&
-          adminCode === "123"
-        ) {
+        } else if (validCredentials) {
+          // This now handles both RT and principal roles
           await login(email, password, "admin");
         } else {
           toast({
