@@ -52,9 +52,10 @@ export const LoginForm = ({ onLoginTypeChange }: LoginFormProps) => {
             });
             return;
           }
-        } else if (validCredentials) {
-          // This now handles both RT and principal roles
-          await login(email, password, "admin");
+        } else if (adminType === "RT" && validCredentials) {
+          await login(email, password, "RT");
+        } else if (adminType === "principal" && validCredentials) {
+          await login(email, password, "principal");
         } else {
           toast({
             title: "Invalid Admin Credentials",
