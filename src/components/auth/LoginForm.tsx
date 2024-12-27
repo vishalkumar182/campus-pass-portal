@@ -1,13 +1,9 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
-import { PasswordInput } from "./PasswordInput";
 import { AdminLoginFields } from "./AdminLoginFields";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ForgotPasswordForm } from "./ForgotPasswordForm";
+import { StudentLoginFields } from "./StudentLoginFields";
 
 interface LoginFormProps {
   onLoginTypeChange: (isAdmin: boolean) => void;
@@ -41,28 +37,25 @@ export const LoginForm = ({ onLoginTypeChange }: LoginFormProps) => {
           password === "123456" &&
           adminCode === "123";
 
-        if (adminType === "advisor") {
-          if (adminCode === "123") {
-            await login(email, password, "advisor");
-          } else {
-            toast({
-              title: "Invalid Advisor Code",
-              description: "Use code: 123",
-              variant: "destructive",
-            });
-            return;
-          }
-        } else if (adminType === "RT" && validCredentials) {
-          await login(email, password, "RT");
-        } else if (adminType === "principal" && validCredentials) {
-          await login(email, password, "principal");
-        } else {
+        if (!validCredentials) {
           toast({
             title: "Invalid Admin Credentials",
             description: "Use: admin@test.com / 123456 / code: 123",
             variant: "destructive",
           });
           return;
+        }
+
+        switch (adminType) {
+          case "RT":
+            await login(email, password, "RT");
+            break;
+          case "principal":
+            await login(email, password, "principal");
+            break;
+          case "advisor":
+            await login(email, password, "advisor");
+            break;
         }
       } else {
         await login(email, password, "student");
@@ -79,52 +72,45 @@ export const LoginForm = ({ onLoginTypeChange }: LoginFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {showAdminFields && (
+      {showAdminFields ? (
         <AdminLoginFields
           adminCode={adminCode}
           setAdminCode={setAdminCode}
           adminType={adminType}
           setAdminType={setAdminType}
         />
+      ) : (
+        <StudentLoginFields
+          email={email}
+          setEmail={setEmail}
+          password={password}
+          setPassword={setPassword}
+        />
       )}
 
-      <div className="space-y-2">
-        <Label htmlFor="login-email">Email</Label>
-        <Input
-          id="login-email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          placeholder="Enter your email"
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="login-password">Password</Label>
-        <PasswordInput
-          id="login-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        {!showAdminFields && (
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="link"
-                className="px-0 font-normal text-sm text-primary hover:text-primary/90"
-              >
-                Forgot password?
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Reset Password</DialogTitle>
-              </DialogHeader>
-              <ForgotPasswordForm />
-            </DialogContent>
-          </Dialog>
-        )}
-      </div>
+      {showAdminFields && (
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="login-email">Email</Label>
+            <Input
+              id="login-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="Enter your email"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="login-password">Password</Label>
+            <PasswordInput
+              id="login-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+        </div>
+      )}
 
       <div className="space-y-4">
         <Button type="submit" className="w-full">

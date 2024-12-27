@@ -20,11 +20,9 @@ export const AdminLoginFields = ({
 }: AdminLoginFieldsProps) => {
   const [selectedDepartment, setSelectedDepartment] = useState<string>("");
   const [selectedYear, setSelectedYear] = useState<string>("");
-  const [showLoginFields, setShowLoginFields] = useState(false);
 
   const handleRoleSelect = (value: "RT" | "principal" | "advisor") => {
     setAdminType(value);
-    setShowLoginFields(true);
     setSelectedDepartment("");
     setSelectedYear("");
   };
@@ -53,7 +51,7 @@ export const AdminLoginFields = ({
         </RadioGroup>
       </div>
 
-      {showLoginFields && adminType === "advisor" && (
+      {adminType === "advisor" && (
         <div className="space-y-4">
           <DepartmentSelector
             selectedDepartment={selectedDepartment}
@@ -68,18 +66,15 @@ export const AdminLoginFields = ({
         </div>
       )}
 
-      {showLoginFields && ((adminType === "RT" || adminType === "principal") || 
-        (adminType === "advisor" && selectedDepartment && selectedYear)) && (
-        <div className="space-y-2">
-          <Label htmlFor="admin-code" className="font-medium">Admin Code</Label>
-          <PasswordInput
-            id="admin-code"
-            value={adminCode}
-            onChange={(e) => setAdminCode(e.target.value)}
-            placeholder="Enter admin code"
-          />
-        </div>
-      )}
+      <div className="space-y-2">
+        <Label htmlFor="admin-code" className="font-medium">Admin Code</Label>
+        <PasswordInput
+          id="admin-code"
+          value={adminCode}
+          onChange={(e) => setAdminCode(e.target.value)}
+          placeholder="Enter admin code"
+        />
+      </div>
     </div>
   );
 };

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 
-type UserRole = "student" | "admin" | "advisor" | null;
+type UserRole = "student" | "admin" | "RT" | "principal" | "advisor" | null;
 
 interface User {
   id: string;
