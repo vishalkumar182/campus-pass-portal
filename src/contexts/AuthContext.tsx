@@ -72,10 +72,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error("Invalid email format");
       }
 
-      if (role === "admin") {
+      if (role === "RT" || role === "principal" || role === "advisor") {
         const mockUser = {
           id: "1",
-          name: "Admin User",
+          name: `${role.toUpperCase()} Admin`,
           email,
           role,
         };
@@ -85,8 +85,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           title: "Login successful",
           description: `Welcome back, ${mockUser.name}!`,
         });
-        navigate("/admin-dashboard");
-      } else {
+
+        // Route to specific admin dashboard based on role
+        switch (role) {
+          case "RT":
+            navigate("/rt-dashboard");
+            break;
+          case "principal":
+            navigate("/principal-dashboard");
+            break;
+          case "advisor":
+            navigate("/advisor-dashboard");
+            break;
+          default:
+            navigate("/admin-dashboard");
+        }
+      } else if (role === "student") {
         const storedUsers = JSON.parse(localStorage.getItem("users") || "[]");
         const foundUser = storedUsers.find((u: SignupData) => u.email === email);
         
