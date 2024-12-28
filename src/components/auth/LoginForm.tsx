@@ -32,6 +32,8 @@ export const LoginForm = ({ onLoginTypeChange }: LoginFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Login attempt with:", { email, password, adminCode, adminType });
+
     try {
       if (showAdminFields) {
         // Using same credentials for all admin roles
@@ -41,6 +43,7 @@ export const LoginForm = ({ onLoginTypeChange }: LoginFormProps) => {
           adminCode === "123";
 
         if (!validCredentials) {
+          console.log("Invalid credentials provided");
           toast({
             title: "Invalid Admin Credentials",
             description: `Use: admin@test.com / 123456 / code: 123`,
@@ -49,18 +52,11 @@ export const LoginForm = ({ onLoginTypeChange }: LoginFormProps) => {
           return;
         }
 
-        switch (adminType) {
-          case "RT":
-            await login(email, password, "RT");
-            break;
-          case "principal":
-            await login(email, password, "principal");
-            break;
-          case "advisor":
-            await login(email, password, "advisor");
-            break;
-        }
+        console.log("Valid credentials, attempting login with role:", adminType);
+        await login(email, password, adminType);
+        console.log("Login successful");
       } else {
+        console.log("Attempting student login");
         await login(email, password, "student");
       }
     } catch (error) {
