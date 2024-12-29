@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import ApprovedOutpass from "./ApprovedOutpass";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import OutpassRequestRow from "./OutpassRequestRow";
 
 const OutpassHistory = () => {
   const { user } = useAuth();
@@ -27,39 +29,22 @@ const OutpassHistory = () => {
       {outpasses.length === 0 ? (
         <p className="text-gray-500 text-center py-4">No outpass history found</p>
       ) : (
-        <div className="space-y-4">
-          {outpasses.map((outpass) => (
-            <div key={outpass.id}>
-              {outpass.status === "approved" ? (
-                <ApprovedOutpass outpass={outpass} />
-              ) : (
-                <div className="bg-white rounded-lg shadow-md p-6 mb-4">
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <p className="font-semibold">Time Out:</p>
-                      <p>{new Date(outpass.timeOut).toLocaleString()}</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold">Time In:</p>
-                      <p>{new Date(outpass.timeIn).toLocaleString()}</p>
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <p className="font-semibold">Reason:</p>
-                    <p>{outpass.reason}</p>
-                  </div>
-                  <div>
-                    <p className="font-semibold">Status:</p>
-                    <p className={`${
-                      outpass.status === "rejected" ? "text-red-600" : "text-yellow-600"
-                    }`}>
-                      {outpass.status.toUpperCase()}
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Time Out</TableHead>
+                <TableHead>Time In</TableHead>
+                <TableHead>Reason</TableHead>
+                <TableHead>Status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {outpasses.map((outpass) => (
+                <OutpassRequestRow key={outpass.id} request={outpass} />
+              ))}
+            </TableBody>
+          </Table>
         </div>
       )}
     </div>
