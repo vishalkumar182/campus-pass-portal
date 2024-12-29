@@ -30,10 +30,15 @@ const PrincipalDashboard = () => {
     return () => window.removeEventListener("storage", loadRequests);
   }, []);
 
-  const handleApprove = (requestId) => {
+  const handleApprove = (requestId, signature) => {
     const allRequests = JSON.parse(localStorage.getItem("outpassRequests") || "[]");
     const updatedAllRequests = allRequests.map((req) =>
-      req.id === requestId ? { ...req, status: "approved", approvedBy: "principal" } : req
+      req.id === requestId ? { 
+        ...req, 
+        status: "approved", 
+        approvedBy: "principal",
+        principalSignature: signature 
+      } : req
     );
     
     localStorage.setItem("outpassRequests", JSON.stringify(updatedAllRequests));
@@ -90,6 +95,7 @@ const PrincipalDashboard = () => {
                     request={request}
                     onApprove={handleApprove}
                     onReject={handleReject}
+                    role="principal"
                   />
                 ))}
               </TableBody>

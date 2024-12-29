@@ -30,10 +30,10 @@ const RTDashboard = () => {
     return () => window.removeEventListener("storage", loadRequests);
   }, []);
 
-  const handleApprove = (requestId) => {
+  const handleApprove = (requestId, signature) => {
     const allRequests = JSON.parse(localStorage.getItem("outpassRequests") || "[]");
     const updatedAllRequests = allRequests.map((req) =>
-      req.id === requestId ? { ...req, status: "approved", approvedBy: "RT" } : req
+      req.id === requestId ? { ...req, status: "approved", approvedBy: "RT", rtSignature: signature } : req
     );
     
     localStorage.setItem("outpassRequests", JSON.stringify(updatedAllRequests));
@@ -45,10 +45,14 @@ const RTDashboard = () => {
     });
   };
 
-  const handleForwardToPrincipal = (requestId) => {
+  const handleForwardToPrincipal = (requestId, signature) => {
     const allRequests = JSON.parse(localStorage.getItem("outpassRequests") || "[]");
     const updatedAllRequests = allRequests.map((req) =>
-      req.id === requestId ? { ...req, status: "forwarded_to_principal" } : req
+      req.id === requestId ? { 
+        ...req, 
+        status: "forwarded_to_principal",
+        rtSignature: signature 
+      } : req
     );
     
     localStorage.setItem("outpassRequests", JSON.stringify(updatedAllRequests));
@@ -106,6 +110,7 @@ const RTDashboard = () => {
                     onApprove={handleApprove}
                     onReject={handleReject}
                     onForward={handleForwardToPrincipal}
+                    role="rt"
                   />
                 ))}
               </TableBody>
