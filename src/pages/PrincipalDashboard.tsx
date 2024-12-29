@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import DashboardHeader from "@/components/shared/DashboardHeader";
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import OutpassRequestCard from "@/components/admin/OutpassRequestCard";
 
 const PrincipalDashboard = () => {
   const { user } = useAuth();
@@ -38,7 +37,6 @@ const PrincipalDashboard = () => {
     );
     
     localStorage.setItem("outpassRequests", JSON.stringify(updatedAllRequests));
-    
     setRequests(requests.filter((req) => req.id !== requestId));
     
     toast({
@@ -54,7 +52,6 @@ const PrincipalDashboard = () => {
     );
     
     localStorage.setItem("outpassRequests", JSON.stringify(updatedAllRequests));
-    
     setRequests(requests.filter((req) => req.id !== requestId));
     
     toast({
@@ -88,29 +85,12 @@ const PrincipalDashboard = () => {
               </TableHeader>
               <TableBody>
                 {requests.map((request) => (
-                  <TableRow key={request.id}>
-                    <TableCell>{request.studentName}</TableCell>
-                    <TableCell>{request.roomNumber}</TableCell>
-                    <TableCell>{new Date(request.timeOut).toLocaleString()}</TableCell>
-                    <TableCell>{new Date(request.timeIn).toLocaleString()}</TableCell>
-                    <TableCell>{request.reason}</TableCell>
-                    <TableCell className="space-x-2">
-                      <Button
-                        onClick={() => handleApprove(request.id)}
-                        variant="outline"
-                        className="bg-green-50 hover:bg-green-100 text-green-600"
-                      >
-                        Approve
-                      </Button>
-                      <Button
-                        onClick={() => handleReject(request.id)}
-                        variant="outline"
-                        className="bg-red-50 hover:bg-red-100 text-red-600"
-                      >
-                        Reject
-                      </Button>
-                    </TableCell>
-                  </TableRow>
+                  <OutpassRequestCard
+                    key={request.id}
+                    request={request}
+                    onApprove={handleApprove}
+                    onReject={handleReject}
+                  />
                 ))}
               </TableBody>
             </Table>

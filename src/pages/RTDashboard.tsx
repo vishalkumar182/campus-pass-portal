@@ -1,26 +1,23 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import DashboardHeader from "@/components/shared/DashboardHeader";
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import OutpassRequestCard from "@/components/admin/OutpassRequestCard";
 
 const RTDashboard = () => {
   const { user } = useAuth();
   const [requests, setRequests] = useState([]);
 
   useEffect(() => {
-    // Load outpass requests from localStorage
     const loadRequests = () => {
       const storedRequests = JSON.parse(localStorage.getItem("outpassRequests") || "[]");
-      // Filter requests that haven't been processed yet
       const pendingRequests = storedRequests.filter(
         (req) => req.status === "pending"
       );
@@ -29,25 +26,18 @@ const RTDashboard = () => {
     };
 
     loadRequests();
-    // Add event listener for storage changes
     window.addEventListener("storage", loadRequests);
     return () => window.removeEventListener("storage", loadRequests);
   }, []);
 
   const handleApprove = (requestId) => {
-    const updatedRequests = requests.map((req) =>
-      req.id === requestId ? { ...req, status: "approved", approvedBy: "RT" } : req
-    );
-    
-    // Update localStorage with all requests
     const allRequests = JSON.parse(localStorage.getItem("outpassRequests") || "[]");
     const updatedAllRequests = allRequests.map((req) =>
       req.id === requestId ? { ...req, status: "approved", approvedBy: "RT" } : req
     );
-    localStorage.setItem("outpassRequests", JSON.stringify(updatedAllRequests));
     
-    // Update local state
-    setRequests(updatedRequests);
+    localStorage.setItem("outpassRequests", JSON.stringify(updatedAllRequests));
+    setRequests(requests.filter((req) => req.id !== requestId));
     
     toast({
       title: "Outpass Approved",
@@ -56,19 +46,13 @@ const RTDashboard = () => {
   };
 
   const handleForwardToPrincipal = (requestId) => {
-    const updatedRequests = requests.map((req) =>
-      req.id === requestId ? { ...req, status: "forwarded_to_principal" } : req
-    );
-    
-    // Update localStorage
     const allRequests = JSON.parse(localStorage.getItem("outpassRequests") || "[]");
     const updatedAllRequests = allRequests.map((req) =>
       req.id === requestId ? { ...req, status: "forwarded_to_principal" } : req
     );
-    localStorage.setItem("outpassRequests", JSON.stringify(updatedAllRequests));
     
-    // Update local state
-    setRequests(updatedRequests);
+    localStorage.setItem("outpassRequests", JSON.stringify(updatedAllRequests));
+    setRequests(requests.filter((req) => req.id !== requestId));
     
     toast({
       title: "Outpass Forwarded",
@@ -77,19 +61,13 @@ const RTDashboard = () => {
   };
 
   const handleReject = (requestId) => {
-    const updatedRequests = requests.map((req) =>
-      req.id === requestId ? { ...req, status: "rejected", rejectedBy: "RT" } : req
-    );
-    
-    // Update localStorage
     const allRequests = JSON.parse(localStorage.getItem("outpassRequests") || "[]");
     const updatedAllRequests = allRequests.map((req) =>
       req.id === requestId ? { ...req, status: "rejected", rejectedBy: "RT" } : req
     );
-    localStorage.setItem("outpassRequests", JSON.stringify(updatedAllRequests));
     
-    // Update local state
-    setRequests(updatedRequests);
+    localStorage.setItem("outpassRequests", JSON.stringify(updatedAllRequests));
+    setRequests(requests.filter((req) => req.id !== requestId));
     
     toast({
       title: "Outpass Rejected",
@@ -122,36 +100,13 @@ const RTDashboard = () => {
               </TableHeader>
               <TableBody>
                 {requests.map((request) => (
-                  <TableRow key={request.id}>
-                    <TableCell>{request.studentName}</TableCell>
-                    <TableCell>{request.roomNumber}</TableCell>
-                    <TableCell>{new Date(request.timeOut).toLocaleString()}</TableCell>
-                    <TableCell>{new Date(request.timeIn).toLocaleString()}</TableCell>
-                    <TableCell>{request.reason}</TableCell>
-                    <TableCell className="space-x-2">
-                      <Button
-                        onClick={() => handleApprove(request.id)}
-                        variant="outline"
-                        className="bg-green-50 hover:bg-green-100 text-green-600"
-                      >
-                        Approve
-                      </Button>
-                      <Button
-                        onClick={() => handleForwardToPrincipal(request.id)}
-                        variant="outline"
-                        className="bg-blue-50 hover:bg-blue-100 text-blue-600"
-                      >
-                        Forward to Principal
-                      </Button>
-                      <Button
-                        onClick={() => handleReject(request.id)}
-                        variant="outline"
-                        className="bg-red-50 hover:bg-red-100 text-red-600"
-                      >
-                        Reject
-                      </Button>
-                    </TableCell>
-                  </TableRow>
+                  <OutpassRequestCard
+                    key={request.id}
+                    request={request}
+                    onApprove={handleApprove}
+                    onReject={handleReject}
+                    onForward={handleForwardToPrincipal}
+                  />
                 ))}
               </TableBody>
             </Table>

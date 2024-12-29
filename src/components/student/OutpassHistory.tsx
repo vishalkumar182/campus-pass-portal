@@ -1,59 +1,66 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import OutpassRequestRow from "./OutpassRequestRow";
-
-interface OutpassRequest {
-  id: number;
-  studentType: string;
-  timeOut: string;
-  timeIn: string;
-  reason: string;
-  status: "pending" | "approved" | "rejected";
-  submittedAt: string;
-  email: string;
-}
+import ApprovedOutpass from "./ApprovedOutpass";
 
 const OutpassHistory = () => {
   const { user } = useAuth();
-  const [requests, setRequests] = useState<OutpassRequest[]>([]);
+  const [outpasses, setOutpasses] = useState([]);
 
   useEffect(() => {
-    const outpassRequests = JSON.parse(localStorage.getItem("outpassRequests") || "[]");
-    const userRequests = outpassRequests.filter(
-      (request: OutpassRequest) => request.email === user?.email
-    );
-    setRequests(userRequests);
+    const loadOutpasses = () => {
+      const storedOutpasses = JSON.parse(localStorage.getItem("outpassRequests") || "[]");
+      const userOutpasses = storedOutpasses.filter(
+        (outpass) => outpass.email === user?.email
+      );
+      setOutpasses(userOutpasses);
+    };
+
+    loadOutpasses();
+    window.addEventListener("storage", loadOutpasses);
+    return () => window.removeEventListener("storage", loadOutpasses);
   }, [user?.email]);
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-2xl font-bold text-primary mb-6">Outpass History</h2>
-      {requests.length === 0 ? (
-        <p className="text-gray-500">No outpass requests found.</p>
+    <div className="space-y-4">
+      <h2 className="text-xl font-semibold mb-4">Outpass History</h2>
+      
+      {outpasses.length === 0 ? (
+        <p className="text-gray-500 text-center py-4">No outpass history found</p>
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Submitted On</TableHead>
-              <TableHead>Time Out</TableHead>
-              <TableHead>Time In</TableHead>
-              <TableHead>Reason</TableHead>
-              <TableHead>Status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {requests.map((request) => (
-              <OutpassRequestRow key={request.id} request={request} />
-            ))}
-          </TableBody>
-        </Table>
+        <div className="space-y-4">
+          {outpasses.map((outpass) => (
+            <div key={outpass.id}>
+              {outpass.status === "approved" ? (
+                <ApprovedOutpass outpass={outpass} />
+              ) : (
+                <div className="bg-white rounded-lg shadow-md p-6 mb-4">
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <p className="font-semibold">Time Out:</p>
+                      <p>{new Date(outpass.timeOut).toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Time In:</p>
+                      <p>{new Date(outpass.timeIn).toLocaleString()}</p>
+                    </div>
+                  </div>
+                  <div className="mb-4">
+                    <p className="font-semibold">Reason:</p>
+                    <p>{outpass.reason}</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold">Status:</p>
+                    <p className={`${
+                      outpass.status === "rejected" ? "text-red-600" : "text-yellow-600"
+                    }`}>
+                      {outpass.status.toUpperCase()}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
