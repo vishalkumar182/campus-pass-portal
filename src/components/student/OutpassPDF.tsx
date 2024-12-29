@@ -13,6 +13,8 @@ interface OutpassPDFProps {
     reason: string;
     status: string;
     approvedBy?: string;
+    rtSignature?: string;
+    principalSignature?: string;
   };
 }
 
@@ -71,17 +73,34 @@ const OutpassPDF = React.forwardRef<HTMLDivElement, OutpassPDFProps>(
           </div>
 
           <div className="mt-8 pt-8 border-t">
-            <div className="flex justify-between">
-              <div>
-                <p className="font-semibold">Status:</p>
-                <p className="text-green-600">
-                  {outpassData.status.toUpperCase()}
+            <div className="grid grid-cols-2 gap-4">
+              {outpassData.rtSignature && (
+                <div className="text-center">
+                  <div className="border-b-2 border-black pb-2 mb-2">
+                    {outpassData.rtSignature}
+                  </div>
+                  <p className="text-sm font-semibold">RT Signature</p>
+                </div>
+              )}
+              {outpassData.principalSignature && (
+                <div className="text-center">
+                  <div className="border-b-2 border-black pb-2 mb-2">
+                    {outpassData.principalSignature}
+                  </div>
+                  <p className="text-sm font-semibold">Principal Signature</p>
+                </div>
+              )}
+            </div>
+            <div className="mt-4">
+              <p className="font-semibold">Status:</p>
+              <p className="text-green-600">
+                {outpassData.status.toUpperCase()}
+              </p>
+              {outpassData.approvedBy && (
+                <p className="text-sm mt-1">
+                  Approved by: {outpassData.approvedBy}
                 </p>
-              </div>
-              <div>
-                <p className="font-semibold">Approved By:</p>
-                <p>{outpassData.approvedBy}</p>
-              </div>
+              )}
             </div>
           </div>
         </div>
