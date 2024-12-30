@@ -59,41 +59,72 @@ const OutpassForm = () => {
     <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow">
       <div className="grid grid-cols-2 gap-6">
         <div>
-          <label htmlFor="timeOut" className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Name
+          </label>
+          <Input value={user?.name || ""} disabled />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Registration Number
+          </label>
+          <Input value={user?.registrationNumber || ""} disabled />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Department
+          </label>
+          <Input value={user?.department || ""} disabled />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Year
+          </label>
+          <Input value={user?.year || ""} disabled />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Room Number
+          </label>
+          <Input value={user?.roomNumber || ""} disabled />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Phone Number
+          </label>
+          <Input value={user?.phoneNumber || ""} disabled />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Time Out
           </label>
           <Input
-            id="timeOut"
             type="datetime-local"
             value={timeOut}
             onChange={(e) => setTimeOut(e.target.value)}
-            className="mt-1"
           />
         </div>
         <div>
-          <label htmlFor="timeIn" className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Time In
           </label>
           <Input
-            id="timeIn"
             type="datetime-local"
             value={timeIn}
             onChange={(e) => setTimeIn(e.target.value)}
-            className="mt-1"
           />
         </div>
       </div>
 
       <div>
-        <label htmlFor="reason" className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           Reason
         </label>
         <Textarea
-          id="reason"
           value={reason}
           onChange={(e) => setReason(e.target.value)}
-          className="mt-1"
           rows={4}
+          placeholder="Enter your reason for requesting outpass..."
         />
       </div>
 
