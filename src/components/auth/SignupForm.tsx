@@ -26,11 +26,29 @@ export const SignupForm = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const validatePassword = (password: string) => {
+    const errors = [];
+    if (password.length < 6) {
+      errors.push("Password must be at least 6 characters long");
+    }
+    return errors;
+  };
+
   const validatePersonalInfo = () => {
     if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required personal information fields.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    const passwordErrors = validatePassword(formData.password);
+    if (passwordErrors.length > 0) {
+      toast({
+        title: "Invalid Password",
+        description: passwordErrors.join(", "),
         variant: "destructive",
       });
       return false;
@@ -101,7 +119,10 @@ export const SignupForm = () => {
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Signup error:", error);
+        throw error;
+      }
 
       console.log("Signup successful:", data);
       
@@ -116,9 +137,20 @@ export const SignupForm = () => {
       }
     } catch (error) {
       console.error("Signup error:", error);
+      let errorMessage = "Unable to create account. Please try again.";
+      
+      if (error instanceof Error) {
+        // Handle specific Supabase error messages
+        if (error.message.includes("weak_password")) {
+          errorMessage = "Password is too weak. Please use at least 6 characters.";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       toast({
         title: "Signup Failed",
-        description: error instanceof Error ? error.message : "Unable to create account. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     }
