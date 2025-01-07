@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { PersonalInfoFields } from "./PersonalInfoFields";
 import { StudentSignupFields } from "./StudentSignupFields";
+import { supabase } from "@/integrations/supabase/client";
 
 export const SignupForm = () => {
   const { signup } = useAuth();
@@ -82,12 +83,31 @@ export const SignupForm = () => {
 
     try {
       console.log("Attempting to signup with data:", formData);
-      const { confirmPassword, ...signupData } = formData;
-      await signup(signupData);
+      
+      // Sign up with Supabase
+      const { data, error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            name: formData.name,
+            registrationNumber: formData.registrationNumber,
+            department: formData.department,
+            year: formData.year,
+            roomNumber: formData.roomNumber,
+            phoneNumber: formData.phoneNumber,
+            role: formData.role,
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      console.log("Signup successful:", data);
       
       toast({
         title: "Account created successfully",
-        description: "Please login with your credentials.",
+        description: "Please check your email for verification and then login.",
       });
       
       const loginTab = document.querySelector('[data-tab="login"]') as HTMLElement;
@@ -98,7 +118,7 @@ export const SignupForm = () => {
       console.error("Signup error:", error);
       toast({
         title: "Signup Failed",
-        description: "Unable to create account. Please try again.",
+        description: error instanceof Error ? error.message : "Unable to create account. Please try again.",
         variant: "destructive",
       });
     }

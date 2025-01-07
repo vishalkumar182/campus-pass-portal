@@ -9,7 +9,102 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      dsfdf: {
+        Row: {
+          created_at: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
+      }
+      outpass_requests: {
+        Row: {
+          created_at: string
+          id: string
+          principal_signature: string | null
+          reason: string
+          rt_signature: string | null
+          status: string | null
+          time_in: string
+          time_out: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          principal_signature?: string | null
+          reason: string
+          rt_signature?: string | null
+          status?: string | null
+          time_in: string
+          time_out: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          principal_signature?: string | null
+          reason?: string
+          rt_signature?: string | null
+          status?: string | null
+          time_in?: string
+          time_out?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          department: string | null
+          email: string
+          id: string
+          name: string
+          phone_number: string | null
+          photo_url: string | null
+          registration_number: string | null
+          room_number: string | null
+          updated_at: string
+          year: string | null
+        }
+        Insert: {
+          created_at?: string
+          department?: string | null
+          email: string
+          id: string
+          name: string
+          phone_number?: string | null
+          photo_url?: string | null
+          registration_number?: string | null
+          room_number?: string | null
+          updated_at?: string
+          year?: string | null
+        }
+        Update: {
+          created_at?: string
+          department?: string | null
+          email?: string
+          id?: string
+          name?: string
+          phone_number?: string | null
+          photo_url?: string | null
+          registration_number?: string | null
+          room_number?: string | null
+          updated_at?: string
+          year?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
