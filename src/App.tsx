@@ -11,29 +11,40 @@ import AdminDashboard from "./pages/AdminDashboard";
 import RTDashboard from "./pages/RTDashboard";
 import PrincipalDashboard from "./pages/PrincipalDashboard";
 import AdvisorDashboard from "./pages/AdvisorDashboard";
+import { useState } from "react";
 
-const queryClient = new QueryClient();
+const App = () => {
+  // Initialize QueryClient in the component
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000, // 1 minute
+        retry: 1,
+      },
+    },
+  }));
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/student-dashboard" element={<StudentDashboard />} />
-            <Route path="/admin-dashboard" element={<AdminDashboard />} />
-            <Route path="/rt-dashboard" element={<RTDashboard />} />
-            <Route path="/principal-dashboard" element={<PrincipalDashboard />} />
-            <Route path="/advisor-dashboard" element={<AdvisorDashboard />} />
-          </Routes>
-          <Toaster />
-          <Sonner />
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <BrowserRouter>
+          <AuthProvider>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/student-dashboard" element={<StudentDashboard />} />
+              <Route path="/admin-dashboard" element={<AdminDashboard />} />
+              <Route path="/rt-dashboard" element={<RTDashboard />} />
+              <Route path="/principal-dashboard" element={<PrincipalDashboard />} />
+              <Route path="/advisor-dashboard" element={<AdvisorDashboard />} />
+            </Routes>
+            <Toaster />
+            <Sonner />
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
